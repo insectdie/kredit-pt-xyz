@@ -21,7 +21,12 @@ func main() {
 	konsumenRepository := repository.NewKonsumenRepository()
 	konsumenService := service.NewKonsumenService(konsumenRepository, db, validate)
 	konsumenController := controller.NewKonsumenController(konsumenService)
-	router := app.NewRouter(konsumenController)
+
+	transaksiRepository := repository.NewTransaksiRepository()
+	transaksiService := service.NewTransaksiService(transaksiRepository, db, validate)
+	transaksiController := controller.NewTransaksiController(transaksiService)
+
+	router := app.NewRouter(konsumenController, transaksiController)
 
 	server := http.Server{
 		Addr:    "localhost:3000",

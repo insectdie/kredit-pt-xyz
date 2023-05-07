@@ -42,7 +42,11 @@ func setupRouter(db *sql.DB) http.Handler {
 	konsumenService := service.NewKonsumenService(konsumenRepository, db, validate)
 	konsumenController := controller.NewKonsumenController(konsumenService)
 
-	router := app.NewRouter(konsumenController)
+	transaksiRepository := repository.NewTransaksiRepository()
+	transaksiService := service.NewTransaksiService(transaksiRepository, db, validate)
+	transaksiController := controller.NewTransaksiController(transaksiService)
+
+	router := app.NewRouter(konsumenController, transaksiController)
 
 	return middleware.NewAuthMiddleware(router)
 }

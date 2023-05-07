@@ -24,3 +24,23 @@ func ToKonsumenResponses(konsumens []domain.Konsumen) []web.KonsumenResponse {
 	}
 	return konsumenResponses
 }
+
+func ToTransaksiResponse(transaksi domain.Transaksi) web.TransaksiResponse {
+	return web.TransaksiResponse{
+		No_kontrak:  transaksi.No_kontrak,
+		Nik:         transaksi.Nik,
+		Otr:         transaksi.Otr,
+		Admin_fee:   transaksi.Admin_fee,
+		Jml_cicilan: transaksi.Jml_cicilan,
+		Jml_bunga:   transaksi.Jml_bunga,
+		Nama_asset:  transaksi.Nama_asset,
+	}
+}
+
+func ToTransaksiResponses(transaksis []domain.Transaksi) []web.TransaksiResponse {
+	var transaksiResponses []web.TransaksiResponse
+	for _, transaksi := range transaksis {
+		transaksiResponses = append(transaksiResponses, ToTransaksiResponse(transaksi))
+	}
+	return transaksiResponses
+}
