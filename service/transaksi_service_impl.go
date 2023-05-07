@@ -35,7 +35,6 @@ func (service *TransaksiServiceImpl) Create(ctx context.Context, request web.Tra
 	defer helper.CommitOrRollback(tx)
 
 	transaksi := domain.Transaksi{
-		No_kontrak:  request.No_kontrak,
 		Nik:         request.Nik,
 		Otr:         request.Otr,
 		Admin_fee:   request.Admin_fee,

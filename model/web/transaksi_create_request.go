@@ -1,7 +1,7 @@
 package web
 
 type TransaksiCreateRequest struct {
-	No_kontrak  string `validate:"required" json:"no_kontrak"`
+	// No_kontrak  string `validate:"required" json:"no_kontrak"`
 	Nik         string `validate:"required,min=16,max=16" json:"nik"`
 	Otr         int    `validate:"required" json:"otr"`
 	Admin_fee   int    `validate:"required" json:"admin_fee"`
