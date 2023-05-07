@@ -6,6 +6,7 @@ import (
 	"errors"
 	"insectdie/kredit-pt-xyz/helper"
 	"insectdie/kredit-pt-xyz/model/domain"
+	"log"
 	"strconv"
 )
 
@@ -17,6 +18,23 @@ func NewTransaksiRepository() TransaksiRepository {
 }
 
 func (repository *TransaksiRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, transaksi domain.Transaksi) domain.Transaksi {
+	var limit int
+	limitSQL := "SELECT nvl(limit_pinjaman,0) - (SELECT nvl(SUM(otr), 0) FROM `transaksi` WHERE nik = a.nik) as limit_pinjaman FROM `konsumen_limit` a WHERE nik = ? and bulan = (SELECT TIMESTAMPDIFF(MONTH,  created_datetime, DATE_SUB(SYSDATE(), INTERVAL -1 MONTH)) FROM `konsumen` WHERE nik = a.nik)"
+	err := tx.QueryRowContext(ctx, limitSQL, transaksi.Nik).Scan(&limit)
+	helper.PanicIfError(err)
+
+	switch {
+	case err == sql.ErrNoRows:
+		log.Printf("no user with NIK %d\n", transaksi.Nik)
+	case err != nil:
+		log.Fatalf("query error: %v\n", err)
+	default:
+		if transaksi.Otr > limit {
+			log.Printf("Maximum limit is %q \n", strconv.Itoa(limit))
+			return transaksi
+		}
+	}
+
 	SQL := "insert into transaksi( nik, otr, admin_fee,	jml_cicilan, jml_bunga,	nama_asset ) values (?, ?, ?, ?, ?, ?)"
 	result, err := tx.ExecContext(ctx, SQL,
 		transaksi.Nik,
